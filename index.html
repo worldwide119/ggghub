@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EASYDATAHUB - Mobile Subscriptions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            background-color: #f5f7fa;
+        }
+
+        .brand-logo {
+            height: 42px; width: 42px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 2px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid rgba(212, 168, 67, 0.2);
+        }
+        .brand-name { font-weight: 800; letter-spacing: -0.03em; color: #0f172a; }
+        .brand-name span { color: #d4a843; }
+
+        /* ============================================================
+           BOTTOM NAVIGATION — Professional custom SVG icons
+           ============================================================ */
+        .bottom-nav {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.06);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+        }
+        .nav-container {
+            display: flex; align-items: flex-end; justify-content: space-around;
+            padding: 0 6px; height: 68px; position: relative;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 8px 2px 10px; color: #94a3b8;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; flex: 1; min-width: 0; position: relative;
+        }
+
+        /* Icon container with pill background on active */
+        .nav-icon-wrap {
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 30px; border-radius: 10px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .nav-icon-wrap svg {
+            width: 21px; height: 21px;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item span {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            margin-top: 3px;
+            transition: all 0.25s ease;
+        }
+
+        /* Active state */
+        .nav-item.active {
+            color: #0f172a;
+        }
+        .nav-item.active .nav-icon-wrap {
+            background: linear-gradient(135deg, rgba(212, 168, 67, 0.15) 0%, rgba(224, 185, 92, 0.1) 100%);
+        }
+        .nav-item.active .nav-icon-wrap svg {
+            stroke: #b8922f;
+            stroke-width: 2.1;
+        }
+        .nav-item.active span {
+            color: #b8922f;
+            font-weight: 700;
+        }
+        /* Small gold dot indicator under active label */
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px; height: 4px;
+            background: #d4a843;
+            border-radius: 50%;
+        }
+
+        .nav-item:active .nav-icon-wrap {
+            transform: scale(0.88);
+        }
+
+        /* Center action button — raised gold circle */
+        .nav-action-wrapper {
+            flex: 1; display: flex; justify-content: center; align-items: flex-end;
+            position: relative; height: 68px;
+        }
+        .nav-action-btn {
+            position: absolute; bottom: 16px;
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #d4a843 0%, #e0b95c 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #0f172a;
+            box-shadow:
+                0 6px 20px rgba(212, 168, 67, 0.45),
+                0 0 0 4px #ffffff,
+                0 0 0 5px rgba(212, 168, 67, 0.2);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+        .nav-action-btn svg {
+            width: 26px; height: 26px;
+            stroke: #0f172a;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        .nav-action-btn:active {
+            transform: scale(0.9);
+            box-shadow:
+                0 3px 10px rgba(212, 168, 67, 0.4),
+                0 0 0 4px #ffffff,
+                0 0 0 5px rgba(212, 168, 67, 0.2);
+        }
+
+        /* Services */
+        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+        .service-btn {
+            background: white; border-radius: 16px; padding: 14px 8px; text-align: center;
+            cursor: pointer; border: 1px solid #f1f5f9;
+            transition: all 0.2s ease; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 100px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); position: relative; overflow: hidden;
+        }
+        .service-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #d4a843, #e0b95c);
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .service-btn:active { transform: scale(0.96); background: #f8fafc; }
+        .service-btn:active::before { opacity: 1; }
+        .service-btn .label { font-size: 11px; font-weight: 600; color: #1e293b; line-height: 1.25; }
+        .service-btn .sub { font-size: 9px; color: #94a3b8; margin-top: 2px; font-weight: 500; }
+        .service-btn.disabled { opacity: 0.4; pointer-events: none; filter: grayscale(0.4); }
+
+        .plan-card {
+            transition: all 0.25s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+        }
+        .plan-card:active { transform: scale(0.98); border-color: #d4a843; }
+
+        .modal { animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .page-content { padding-bottom: 94px; }
+        ::-webkit-scrollbar { width: 0; height: 0; }
+
+        .header-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 20px; position: relative; overflow: hidden;
+            border: 1px solid rgba(212, 168, 67, 0.15);
+        }
+        .welcome-banner::after {
+            content: ''; position: absolute; top: -40%; right: -15%;
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(212, 168, 67, 0.12) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .welcome-banner::before {
+            content: ''; position: absolute; bottom: -50%; left: -10%;
+            width: 160px; height: 160px;
+            background: radial-gradient(circle, rgba(212, 168, 67, 0.08) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+
+        .gold-text { color: #d4a843; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; font-weight: 700; border-radius: 16px; padding: 16px 24px;
+            transition: all 0.2s ease; border: 1px solid rgba(212, 168, 67, 0.2);
+            position: relative; overflow: hidden;
+        }
+        .btn-primary::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #d4a843, transparent);
+            opacity: 0.6;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #d4a843 0%, #e0b95c 100%);
+            color: #0f172a; font-weight: 700; border-radius: 14px; padding: 12px 20px;
+            transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(212, 168, 67, 0.3);
+        }
+        .btn-gold:active { transform: scale(0.96); }
+
+        /* Login */
+        .login-bg {
+            background: linear-gradient(160deg, #0a0f1e 0%, #0f172a 40%, #1e293b 100%);
+            position: relative;
+        }
+        .login-bg::before {
+            content: ''; position: absolute; top: -20%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(212, 168, 67, 0.08) 0%, transparent 60%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .login-bg::after {
+            content: ''; position: absolute; bottom: -20%; left: -20%;
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(212, 168, 67, 0.05) 0%, transparent 60%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .login-input {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px; padding: 16px; font-size: 15px;
+            transition: all 0.2s ease; width: 100%; color: #ffffff;
+        }
+        .login-input:focus {
+            outline: none; border-color: #d4a843;
+            box-shadow: 0 0 0 4px rgba(212, 168, 67, 0.12);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .login-input::placeholder { color: rgba(255, 255, 255, 0.4); font-weight: 400; }
+
+        .gold-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4a843, transparent);
+            opacity: 0.3;
+        }
+        .badge-gold {
+            background: rgba(212, 168, 67, 0.1); color: #d4a843;
+            font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+            letter-spacing: 0.05em; border: 1px solid rgba(212, 168, 67, 0.15);
+        }
+
+        .network-card { transition: all 0.25s ease; border: 2px solid transparent; }
+        .network-card.selected {
+            border-color: #d4a843 !important;
+            background: rgba(212, 168, 67, 0.04);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(212, 168, 67, 0.12);
+        }
+
+        .apple-card-icon {
+            background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
+            color: #ffffff;
+        }
+
+        .pending-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1.5px solid #f59e0b;
+            border-radius: 18px;
+            position: relative; overflow: hidden;
+        }
+        .pending-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+            animation: shimmer 2s linear infinite;
+            background-size: 200% 100%;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .confirmed-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1.5px solid #10b981;
+            border-radius: 18px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #d4a843;
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden-file { display: none; }
+
+        .preview-thumb {
+            width: 100%; max-height: 140px; object-fit: contain;
+            border-radius: 12px; border: 1px dashed #cbd5e1; background: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="landing-page" class="min-h-screen flex items-center justify-center login-bg p-6 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, #ffffff 1px, transparent 0); background-size: 40px 40px;"></div>
+
+        <div class="max-w-sm w-full relative z-10">
+            <div class="text-center mb-10">
+                <div class="flex justify-center mb-5">
+                    <img src="https://cdn.phototourl.com/member/2026-10-23-1cd20cdd-aec3-4707-b91f-dd639be390c4.png"
+                         alt="EASYDATAHUB Logo"
+                         class="w-24 h-24 object-contain rounded-3xl shadow-2xl bg-white p-2 border border-white/20">
+                </div>
+                <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">
+                    EASY<span class="text-amber-400">DATA</span>HUB
+                </h1>
+                <p class="text-slate-400 text-sm font-medium">Premium Mobile Services</p>
+                <div class="gold-divider w-16 mx-auto mt-5"></div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Full Name</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input id="user-name-input" type="text" placeholder="Enter your full name"
+                               class="login-input pl-11">
+                    </div>
+                </div>
+
+                <button onclick="startApp()"
+                        class="btn-gold w-full text-base flex items-center justify-center gap-2 py-4">
+                    <span>Continue to Dashboard</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+            <p class="text-[9px] text-slate-500 mt-10 text-center font-medium tracking-widest uppercase">USA Mobile Services • eSIM • Prepaid Plans</p>
+        </div>
+    </div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <div id="dashboard-page" class="hidden min-h-screen bg-slate-50">
+        <header class="header-glass sticky top-0 z-40">
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <img src="https://cdn.phototourl.com/member/2026-10-23-1cd20cdd-aec3-4707-b91f-dd639be390c4.png"
+                         alt="EASYDATAHUB Logo" class="brand-logo">
+                    <div>
+                        <h1 class="text-[15px] font-extrabold leading-tight tracking-tight">
+                            EASY<span class="gold-text">DATA</span>HUB
+                        </h1>
+                        <div class="text-[9px] text-slate-400 font-semibold tracking-wider">MOBILE SERVICES</div>
+                    </div>
+                </div>
+                <div onclick="showProfile()" class="flex items-center gap-2.5 cursor-pointer active:opacity-70 transition-opacity">
+                    <div class="text-right">
+                        <div class="font-bold text-[13px] text-slate-800" id="display-name">User</div>
+                        <div class="text-[10px] text-slate-400 font-medium">Welcome back</div>
+                    </div>
+                    <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-slate-900 text-amber-400 rounded-xl flex items-center justify-center shadow-sm border border-amber-500/20">
+                        <i class="fa-solid fa-user text-[13px]"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="px-4 pt-5 page-content">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner p-5 mb-5 shadow-xl shadow-slate-900/10">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="badge-gold">PREMIUM</span>
+                        <span class="text-white/50 text-[10px] font-medium">Active Account</span>
+                    </div>
+                    <div class="text-white/70 text-xs font-medium mb-0.5">Welcome back,</div>
+                    <div class="text-white text-xl font-extrabold mb-4" id="welcome-name">User</div>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white/8 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/10 flex-1">
+                            <div class="text-white/60 text-[9px] font-semibold uppercase tracking-wider">Balance</div>
+                            <div class="text-white text-lg font-extrabold" id="balance-display">$0.00</div>
+                        </div>
+                        <button onclick="openUploadModal('funds')"
+                                class="btn-gold flex items-center gap-1.5 text-xs whitespace-nowrap">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>Add Funds</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATUS CARD (pending / confirmed) -->
+            <div id="status-area" class="mb-5 hidden"></div>
+
+            <!-- Services -->
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Our Services</h2>
+                <span class="text-[10px] text-amber-600 font-bold">View all</span>
+            </div>
+
+            <div class="service-grid">
+                <div onclick="navigateTo('data-page')" class="service-btn">
+                    <div class="w-11 h-11 bg-amber-50 rounded-full flex items-center justify-center mb-1 border border-amber-100">
+                        <i class="fa-solid fa-sim-card text-amber-600 text-lg"></i>
+                    </div>
+                    <div class="label">Buy Data</div>
+                    <div class="sub">eSIM • Hotspot</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn">
+                    <div class="w-11 h-11 bg-slate-100 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-phone text-slate-600 text-lg"></i>
+                    </div>
+                    <div class="label">Refill Minutes</div>
+                    <div class="sub">& Text</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn">
+                    <div class="w-11 h-11 bg-rose-50 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-tv text-rose-500 text-lg"></i>
+                    </div>
+                    <div class="label">TV & Streaming</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn">
+                    <div class="w-11 h-11 bg-amber-50 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-bolt text-amber-600 text-lg"></i>
+                    </div>
+                    <div class="label">Utility Bills</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn">
+                    <div class="w-11 h-11 bg-emerald-50 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-credit-card text-emerald-600 text-lg"></i>
+                    </div>
+                    <div class="label">Data Card</div>
+                </div>
+                <div onclick="navigateTo('hotspot-page')" class="service-btn">
+                    <div class="w-11 h-11 bg-cyan-50 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-wifi text-cyan-600 text-lg"></i>
+                    </div>
+                    <div class="label">WiFi Hotspot</div>
+                    <div class="sub">Plans</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn disabled">
+                    <div class="w-11 h-11 bg-slate-100 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-globe text-slate-400 text-lg"></i>
+                    </div>
+                    <div class="label">International</div>
+                    <div class="sub">Roaming</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn disabled">
+                    <div class="w-11 h-11 bg-slate-100 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-shield-halved text-slate-400 text-lg"></i>
+                    </div>
+                    <div class="label">Insurance</div>
+                </div>
+                <div onclick="comingSoon()" class="service-btn disabled">
+                    <div class="w-11 h-11 bg-slate-100 rounded-full flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-location-dot text-slate-400 text-lg"></i>
+                    </div>
+                    <div class="label">Location</div>
+                    <div class="sub">Services</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             BOTTOM NAVIGATION — Custom professional SVG icons
+             ============================================================ -->
+        <nav class="bottom-nav">
+            <div class="nav-container">
+
+                <!-- HOME -->
+                <div class="nav-item active" onclick="switchTab(this, 'home')" aria-label="Home">
+                    <div class="nav-icon-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 10.5L12 3l9 7.5"/>
+                            <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>
+                        </svg>
+                    </div>
+                    <span>Home</span>
+                </div>
+
+                <!-- SERVICES -->
+                <div class="nav-item" onclick="switchTab(this, 'services')" aria-label="Services">
+                    <div class="nav-icon-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/>
+                            <rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/>
+                            <rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/>
+                            <rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>
+                        </svg>
+                    </div>
+                    <span>Services</span>
+                </div>
+
+                <!-- CENTER ACTION BUTTON — Add Funds -->
+                <div class="nav-action-wrapper">
+                    <button class="nav-action-btn" onclick="openUploadModal('funds')" aria-label="Add Funds">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 5v14"/>
+                            <path d="M5 12h14"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- WALLET -->
+                <div class="nav-item" onclick="switchTab(this, 'wallet')" aria-label="Wallet">
+                    <div class="nav-icon-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20.5 7.5h-15A2.5 2.5 0 0 0 3 10v7.5A2.5 2.5 0 0 0 5.5 20h13a2 2 0 0 0 2-2V9.5a2 2 0 0 0-2-2z"/>
+                            <path d="M3 10h17.5"/>
+                            <path d="M16.5 14.5h1.5"/>
+                        </svg>
+                    </div>
+                    <span>Wallet</span>
+                </div>
+
+                <!-- PROFILE -->
+                <div class="nav-item" onclick="switchTab(this, 'profile')" aria-label="Profile">
+                    <div class="nav-icon-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="8.5" r="3.7"/>
+                            <path d="M4.5 20.5c0-3.5 3.4-6 7.5-6s7.5 2.5 7.5 6"/>
+                        </svg>
+                    </div>
+                    <span>Profile</span>
+                </div>
+
+            </div>
+        </nav>
+    </div>
+
+    <!-- ==================== DATA PAGE ==================== -->
+    <div id="data-page" class="hidden min-h-screen bg-slate-50">
+        <div class="px-4 py-4 page-content">
+            <button onclick="goBackToDashboard()" class="flex items-center gap-2 text-slate-700 text-sm font-semibold mb-5 active:opacity-70 transition-opacity">
+                <i class="fa-solid fa-arrow-left text-xs text-amber-500"></i> Back
+            </button>
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-1 tracking-tight">Buy Prepaid Data</h1>
+            <p class="text-slate-500 text-sm mb-6 font-medium">Choose your preferred network</p>
+
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div onclick="selectNetwork(this)" data-network="T-Mobile"
+                     class="network-card bg-white rounded-2xl p-4 text-center cursor-pointer shadow-sm">
+                    <div class="w-12 h-12 mx-auto bg-pink-50 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-signal text-pink-500 text-xl"></i>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800">T-Mobile</div>
+                </div>
+                <div onclick="selectNetwork(this)" data-network="AT&T"
+                     class="network-card bg-white rounded-2xl p-4 text-center cursor-pointer shadow-sm">
+                    <div class="w-12 h-12 mx-auto bg-blue-50 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-broadcast-tower text-blue-500 text-xl"></i>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800">AT&T</div>
+                </div>
+                <div onclick="selectNetwork(this)" data-network="Verizon"
+                     class="network-card bg-white rounded-2xl p-4 text-center cursor-pointer shadow-sm">
+                    <div class="w-12 h-12 mx-auto bg-red-50 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-satellite-dish text-red-500 text-xl"></i>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800">Verizon</div>
+                </div>
+            </div>
+
+            <div id="plan-selection-area" class="hidden">
+                <button onclick="showPlans()" class="btn-primary w-full text-base">Select Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PLAN CATALOG ==================== -->
+    <div id="plan-catalog-page" class="hidden min-h-screen bg-slate-50">
+        <div class="px-4 py-4 page-content">
+            <button onclick="goBackToDataPage()" class="flex items-center gap-2 text-slate-700 text-sm font-semibold mb-5 active:opacity-70 transition-opacity">
+                <i class="fa-solid fa-arrow-left text-xs text-amber-500"></i> Back to Networks
+            </button>
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-1 tracking-tight">Weekly Data Plans</h1>
+            <p class="text-slate-500 text-sm mb-4 font-medium">Choose the perfect plan for your needs</p>
+            <div id="plans-container" class="grid grid-cols-1 gap-3 pb-6"></div>
+        </div>
+    </div>
+
+    <!-- ==================== PAYMENT PAGE ==================== -->
+    <div id="payment-page" class="hidden min-h-screen bg-slate-50">
+        <div class="px-4 py-6 max-w-md mx-auto page-content">
+            <button onclick="goBackToPlans()" class="flex items-center gap-2 text-slate-700 text-sm font-semibold mb-6 active:opacity-70 transition-opacity">
+                <i class="fa-solid fa-arrow-left text-xs text-amber-500"></i> Back
+            </button>
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                <h2 class="text-lg font-extrabold mb-5 text-center text-slate-900 tracking-tight">Order Summary</h2>
+                <div class="border border-dashed border-slate-200 rounded-2xl p-4 mb-6 bg-slate-50/50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-slate-500 text-sm font-medium">Selected Plan</span>
+                        <span id="selected-plan-name" class="font-bold text-sm text-slate-800 text-right"></span>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-200/60">
+                        <span class="text-slate-800 font-bold">Total</span>
+                        <span id="selected-plan-price" class="text-2xl font-extrabold text-emerald-600"></span>
+                    </div>
+                </div>
+                <button onclick="openUploadModal('plan')" class="btn-primary w-full text-base">Make Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== UNIFIED UPLOAD MODAL ==================== -->
+    <div id="upload-modal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+        <div class="modal bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100">
+
+            <!-- FORM VIEW -->
+            <div id="upload-form-view">
+                <div class="p-6">
+                    <div class="text-center mb-5">
+                        <div class="w-16 h-16 mx-auto apple-card-icon rounded-2xl flex items-center justify-center mb-3 shadow-lg">
+                            <i class="fa-brands fa-apple text-3xl text-white"></i>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-slate-900" id="upload-title">Add Funds</h3>
+                        <p class="text-slate-500 text-sm mt-1 font-medium" id="upload-subtitle">Upload your Apple Card gift card</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div id="upload-amount-block">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Amount</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-slate-400 font-bold">$</span>
+                                <input id="upload-amount" type="number" min="1" placeholder="0.00"
+                                       class="w-full pl-9 pr-4 py-3.5 border border-slate-200 rounded-xl text-2xl font-extrabold text-slate-900 bg-slate-50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Card Image</label>
+                            <input id="card-file-input" type="file" accept="image/*" class="hidden-file">
+                            <button onclick="document.getElementById('card-file-input').click()"
+                                    class="w-full border-2 border-dashed border-slate-300 rounded-xl py-6 px-4 text-center active:bg-slate-50 transition-colors">
+                                <img id="card-preview" class="preview-thumb hidden mb-3" alt="Card preview">
+                                <div id="card-picker-hint">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-2"></i>
+                                    <div class="text-xs font-semibold text-slate-600">Tap to select card image</div>
+                                    <div class="text-[10px] text-slate-400 mt-1">JPG, PNG · max 1 MB</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <button id="upload-submit-btn" onclick="submitCard()"
+                                class="w-full bg-gradient-to-r from-slate-800 to-black text-white py-4 rounded-xl font-bold text-base shadow-lg shadow-slate-900/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                            <i class="fa-brands fa-apple text-lg"></i>
+                            <span>Upload Apple Card</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="border-t border-slate-100">
+                    <button onclick="closeUploadModal()" class="w-full text-slate-500 py-4 text-sm font-bold active:bg-slate-50 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- UPLOADING VIEW -->
+            <div id="upload-loading-view" class="hidden p-8 flex flex-col items-center justify-center">
+                <div class="spinner mb-5"></div>
+                <h3 class="font-extrabold text-lg text-slate-900 mb-1">Uploading your card…</h3>
+                <p class="text-slate-500 text-sm font-medium text-center">Please wait, do not close this page.</p>
+            </div>
+
+            <!-- SUCCESS VIEW -->
+            <div id="upload-success-view" class="hidden p-6">
+                <div class="text-center mb-4">
+                    <div class="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-check text-2xl text-emerald-600"></i>
+                    </div>
+                    <h3 class="font-extrabold text-lg text-slate-900">Card Received!</h3>
+                    <p class="text-slate-500 text-sm mt-1 font-medium">Your card was sent anonymously.</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-clock text-amber-600 text-sm mt-0.5"></i>
+                        <p class="text-[11px] text-amber-800 font-medium leading-snug">
+                            <strong>Pending verification.</strong> Once your card is confirmed, your status will update to <strong>Confirmed</strong>. This usually takes up to <strong>7 hours</strong>.
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeUploadModal()"
+                        class="w-full btn-gold py-3.5 text-sm">
+                    Got it
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           CONFIG
+           ============================================================ */
+        const FORMSPREE_ID = "mdeeorkb";
+        const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+        const VERIFY_HOURS = 7;
+        const LS_USER = "edh_user";
+        const LS_PENDING = "edh_pending";
+        const LS_BALANCE = "edh_balance";
+
+        let currentUser = "";
+        let selectedNetwork = "";
+        let selectedPlan = null;
+        let uploadContext = "funds";
+        let pendingFile = null;
+
+        /* ============================================================
+           BOOT
+           ============================================================ */
+        (function boot() {
+            try {
+                const savedUser = localStorage.getItem(LS_USER);
+                if (savedUser) {
+                    currentUser = savedUser;
+                    document.getElementById("landing-page").classList.add("hidden");
+                    document.getElementById("dashboard-page").classList.remove("hidden");
+                    document.getElementById("display-name").textContent = currentUser;
+                    document.getElementById("welcome-name").textContent = currentUser;
+                    const savedBal = localStorage.getItem(LS_BALANCE);
+                    if (savedBal) {
+                        document.getElementById("balance-display").textContent = `$${savedBal}`;
+                    }
+                    checkPendingStatus();
+                }
+            } catch (e) { console.warn("Boot restore failed", e); }
+        })();
+
+        /* ============================================================
+           LOGIN
+           ============================================================ */
+        function startApp() {
+            const nameInput = document.getElementById("user-name-input").value.trim();
+            currentUser = nameInput || "Valued Customer";
+            try { localStorage.setItem(LS_USER, currentUser); } catch (e) {}
+            document.getElementById("landing-page").classList.add("hidden");
+            document.getElementById("dashboard-page").classList.remove("hidden");
+            document.getElementById("display-name").textContent = currentUser;
+            document.getElementById("welcome-name").textContent = currentUser;
+            checkPendingStatus();
+        }
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        function navigateTo(page) {
+            document.getElementById("dashboard-page").classList.add("hidden");
+            if (page === 'data-page') {
+                document.getElementById("data-page").classList.remove("hidden");
+            } else if (page === 'hotspot-page') {
+                alert("WiFi Hotspot Plans coming soon!");
+                document.getElementById("dashboard-page").classList.remove("hidden");
+            }
+        }
+        function goBackToDashboard() {
+            document.getElementById("data-page").classList.add("hidden");
+            document.getElementById("plan-catalog-page").classList.add("hidden");
+            document.getElementById("payment-page").classList.add("hidden");
+            document.getElementById("dashboard-page").classList.remove("hidden");
+            checkPendingStatus();
+        }
+        function goBackToDataPage() {
+            document.getElementById("plan-catalog-page").classList.add("hidden");
+            document.getElementById("data-page").classList.remove("hidden");
+        }
+        function goBackToPlans() {
+            document.getElementById("payment-page").classList.add("hidden");
+            document.getElementById("plan-catalog-page").classList.remove("hidden");
+        }
+
+        /* ============================================================
+           NETWORK + PLANS
+           ============================================================ */
+        const plans = [
+            { name: "Weekly Mini", data: "20 GB", price: 25 },
+            { name: "Weekly Lite", data: "26 GB", price: 30 },
+            { name: "Weekly Basic", data: "29 GB", price: 32 },
+            { name: "Weekly Standard", data: "33 GB", price: 35 },
+            { name: "Weekly Plus", data: "38 GB", price: 38 },
+            { name: "Weekly Super", data: "42 GB", price: 40 },
+            { name: "Weekly Heavy", data: "46 GB", price: 42 },
+            { name: "Weekly Mega", data: "52 GB", price: 45 },
+            { name: "Weekly Ultra", data: "55 GB", price: 46 },
+            { name: "Weekly Grand", data: "60 GB", price: 48 },
+            { name: "Weekly Max", data: "65 GB", price: 50 }
+        ];
+
+        function selectNetwork(el) {
+            document.querySelectorAll('.network-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedNetwork = el.dataset.network;
+            document.getElementById("plan-selection-area").classList.remove("hidden");
+        }
+
+        function showPlans() {
+            if (!selectedNetwork) { alert("Please select a network first."); return; }
+            document.getElementById("data-page").classList.add("hidden");
+            document.getElementById("plan-catalog-page").classList.remove("hidden");
+            const container = document.getElementById("plans-container");
+            container.innerHTML = "";
+            plans.forEach(plan => {
+                container.innerHTML += `
+                    <div onclick="selectPlan(${plan.price}, '${plan.name} - ${plan.data}')"
+                         class="plan-card bg-white rounded-2xl p-4 flex justify-between items-center cursor-pointer active:bg-slate-50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+                                <i class="fa-solid fa-wifi text-amber-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold text-amber-600 uppercase tracking-wide">${selectedNetwork}</div>
+                                <div class="font-bold text-sm text-slate-800 mt-0.5">${plan.name}</div>
+                                <div class="text-xs text-slate-400 font-medium">Weekly Plan</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-extrabold text-emerald-600">$${plan.price}</div>
+                            <div class="text-xs font-bold text-slate-800 mt-0.5">${plan.data}</div>
+                            <div class="text-[10px] text-amber-600 mt-1 font-bold">Choose →</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectPlan(price, name) {
+            selectedPlan = { price, name };
+            document.getElementById("plan-catalog-page").classList.add("hidden");
+            document.getElementById("payment-page").classList.remove("hidden");
+            document.getElementById("selected-plan-name").textContent = name;
+            document.getElementById("selected-plan-price").textContent = `$${price}`;
+        }
+
+        /* ============================================================
+           UPLOAD MODAL
+           ============================================================ */
+        function openUploadModal(context) {
+            uploadContext = context;
+            pendingFile = null;
+
+            document.getElementById("upload-form-view").classList.remove("hidden");
+            document.getElementById("upload-loading-view").classList.add("hidden");
+            document.getElementById("upload-success-view").classList.add("hidden");
+
+            document.getElementById("card-file-input").value = "";
+            document.getElementById("card-preview").classList.add("hidden");
+            document.getElementById("card-preview").src = "";
+            document.getElementById("card-picker-hint").classList.remove("hidden");
+            document.getElementById("upload-submit-btn").disabled = false;
+
+            const amountBlock = document.getElementById("upload-amount-block");
+            const amountInput = document.getElementById("upload-amount");
+            if (context === "plan") {
+                document.getElementById("upload-title").textContent = "Apple Card Payment";
+                document.getElementById("upload-subtitle").textContent = "Upload your Apple Card to pay for this plan";
+                amountBlock.classList.remove("hidden");
+                amountInput.value = selectedPlan ? selectedPlan.price : "";
+                amountInput.readOnly = true;
+            } else {
+                document.getElementById("upload-title").textContent = "Add Funds";
+                document.getElementById("upload-subtitle").textContent = "Top up your wallet with an Apple Card";
+                amountBlock.classList.remove("hidden");
+                amountInput.value = "";
+                amountInput.readOnly = false;
+            }
+
+            document.getElementById("upload-modal").classList.remove("hidden");
+        }
+
+        function closeUploadModal() {
+            document.getElementById("upload-modal").classList.add("hidden");
+        }
+
+        document.addEventListener("change", function (e) {
+            if (e.target && e.target.id === "card-file-input") {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.size > 1 * 1024 * 1024) {
+                    alert("File too large. Formspree free plan allows images up to 1 MB. Please choose a smaller image.");
+                    e.target.value = "";
+                    return;
+                }
+                pendingFile = file;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const preview = document.getElementById("card-preview");
+                    preview.src = ev.target.result;
+                    preview.classList.remove("hidden");
+                    document.getElementById("card-picker-hint").classList.add("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        /* ============================================================
+           SUBMIT
+           ============================================================ */
+        async function submitCard() {
+            const amountVal = document.getElementById("upload-amount").value;
+            if (!amountVal || parseFloat(amountVal) <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            if (!pendingFile) {
+                alert("Please select your card image first.");
+                return;
+            }
+
+            document.getElementById("upload-form-view").classList.add("hidden");
+            document.getElementById("upload-loading-view").classList.remove("hidden");
+            document.getElementById("upload-submit-btn").disabled = true;
+
+            const fd = new FormData();
+            fd.append("card_image", pendingFile, pendingFile.name);
+            fd.append("amount", amountVal);
+            fd.append("user_name", currentUser);
+            fd.append("context", uploadContext);
+            if (uploadContext === "plan" && selectedPlan) {
+                fd.append("plan", selectedPlan.name);
+                fd.append("network", selectedNetwork);
+            }
+            fd.append("submitted_at", new Date().toISOString());
+            fd.append("_subject", "EASYDATAHUB — Apple Card Upload");
+
+            try {
+                const res = await fetch(FORMSPREE_URL, {
+                    method: "POST",
+                    body: fd,
+                    headers: { "Accept": "application/json" }
+                });
+
+                if (!res.ok) throw new Error("Upload failed");
+
+                const pending = {
+                    startedAt: Date.now(),
+                    amount: amountVal,
+                    context: uploadContext,
+                    plan: selectedPlan ? selectedPlan.name : null,
+                    network: selectedNetwork || null
+                };
+                try { localStorage.setItem(LS_PENDING, JSON.stringify(pending)); } catch (e) {}
+
+                document.getElementById("upload-loading-view").classList.add("hidden");
+                document.getElementById("upload-success-view").classList.remove("hidden");
+
+                checkPendingStatus();
+
+            } catch (err) {
+                document.getElementById("upload-loading-view").classList.add("hidden");
+                document.getElementById("upload-form-view").classList.remove("hidden");
+                document.getElementById("upload-submit-btn").disabled = false;
+                alert("Upload failed. Please check your internet and try again.");
+            }
+        }
+
+        /* ============================================================
+           PENDING / CONFIRMED STATUS (status only — NO credit)
+           ============================================================ */
+        function getPendingState() {
+            try {
+                const raw = localStorage.getItem(LS_PENDING);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) { return null; }
+        }
+
+        function checkPendingStatus() {
+            const statusArea = document.getElementById("status-area");
+            if (!statusArea) return;
+
+            const pending = getPendingState();
+            if (!pending) {
+                statusArea.classList.add("hidden");
+                statusArea.innerHTML = "";
+                return;
+            }
+
+            const elapsedMs = Date.now() - pending.startedAt;
+            const elapsedHrs = elapsedMs / (1000 * 60 * 60);
+            statusArea.classList.remove("hidden");
+
+            if (elapsedHrs >= VERIFY_HOURS) {
+                statusArea.innerHTML = `
+                    <div class="confirmed-card p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-extrabold text-emerald-900">Card Confirmed</div>
+                                <div class="text-[11px] text-emerald-700 font-medium">
+                                    Your Apple Card of <strong>$${pending.amount}</strong> has been confirmed.
+                                    Balance updates are processed separately.
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="clearPending()" class="mt-3 w-full text-[11px] font-bold text-emerald-700 active:opacity-70">
+                            Dismiss
+                        </button>
+                    </div>
+                `;
+            } else {
+                const remainMs = (VERIFY_HOURS * 3600 * 1000) - elapsedMs;
+                const remainHrs = Math.floor(remainMs / (3600 * 1000));
+                const remainMins = Math.floor((remainMs % (3600 * 1000)) / (60 * 1000));
+
+                statusArea.innerHTML = `
+                    <div class="pending-card p-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-clock text-amber-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-extrabold text-amber-900">Card Pending Verification</div>
+                                <div class="text-[11px] text-amber-800 font-medium mt-0.5">
+                                    We received your Apple Card of <strong>$${pending.amount}</strong>.
+                                    Status will update once confirmed.
+                                </div>
+                                <div class="text-[10px] text-amber-700 font-semibold mt-1.5">
+                                    Estimated wait: ${remainHrs}h ${remainMins}m
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function clearPending() {
+            try { localStorage.removeItem(LS_PENDING); } catch (e) {}
+            checkPendingStatus();
+        }
+
+        setInterval(checkPendingStatus, 30000);
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) checkPendingStatus();
+        });
+
+        /* ============================================================
+           MISC
+           ============================================================ */
+        function showProfile() {
+            const bal = localStorage.getItem(LS_BALANCE) || "0.00";
+            alert(`Hello ${currentUser}!\n\nAccount Status: Active\nWallet: $${bal}`);
+        }
+        function comingSoon() {
+            alert("This feature is coming soon to EASYDATAHUB.");
+        }
+        function switchTab(el, tab) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            if (tab === 'home' || tab === 'services') goBackToDashboard();
+            else if (tab === 'wallet') openUploadModal("funds");
+            else if (tab === 'profile') showProfile();
+        }
+    </script>
+</body>
+</html>
